@@ -5,7 +5,7 @@ const tic_tac_toe = {
     board: ['','','','','','','','',''],
     symbols: {
                 options: ['O','X'],
-                turn_index: 0,
+                turn_index: 1,
                 change(){
                     this.turn_index = ( this.turn_index === 0 ? 1:0 );
                 }
@@ -81,6 +81,7 @@ const tic_tac_toe = {
     },
 
     start() {
+        this.symbols.turn_index = 1
         this.board.fill('');
         this.draw();
         this.gameover = false;       
