@@ -3,20 +3,21 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: black;
 }
 
 .game {
   width: 100vw;
   height: 100vw;
   margin: 0 auto;
-  background-color: #34495e;
-  color: #fff;
+  background-color: black;
+  color: #f3daf7;
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr)
 }
 
 .game>div {
-  border: 6px solid #2c3e50;
+  border: 1px solid #202020;
   font-family: Helvetica;
   font-weight: bold;
   font-size: 4em;
@@ -26,31 +27,23 @@ body {
 }
 
 .btn {
-  border: 5px solid #2c3e50;
-  background-color: #34495e;
-  color: white;
+  border: 2px solid #202020;
+  background-color: black;
+  border-radius: 4px;
+  color: #f3daf7;
   margin-top: 10px;
   padding: 10px 20px
 }
 
 .game > div.winner {
-  background: yellow;
+  background: #202020;
 }
 
-.game > div.winner > span {
-  color: blue;
-}
-
-@media (min-width: 600px) {
+@media (min-width: 300px) {
   .game {
-    width: 600px;
-    height: 600px;
-    border-radius: 10px;
-    border: 6px solid #2c3e50;
-  }
-
-  .game>div {
-    border-radius: 2px;
+    width: 300px;
+    height: 300px;
+    border: 1px solid #202020;
   }
 }
 

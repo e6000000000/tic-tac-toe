@@ -7,14 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Tic Tac Toe</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/game.css' %}">
 </head>
 <body>
     
     <div class='game'></div>
     <button class="btn" onclick="tic_tac_toe.restart()" title="Restart this game">Restart</button>
 
-    <script src="{% static 'js/tic-tac-toe.js' %}"></script>
+    <script src="{% static 'js/game.js' %}"></script>
     <script>
         tic_tac_toe.init( document.querySelector('.game') );
         tic_tac_toe.start();
