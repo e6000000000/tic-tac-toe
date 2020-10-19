@@ -1,29 +1,8 @@
-from enum import Enum
-
 import unittest
 
+from .exceptions import MoveUnableException
+from .enums import GameStatus
 
-class GameFieldSizeException(Exception):
-    def __init__(self, text:str):
-        self.txt = text
-
-class CellAlreadySetedException(Exception):
-    def __init__(self, x:int, y:int):
-        self.txt = f'x={x} y={y}'
-
-class MoveLimitReachedException(Exception):
-    def __init__(self, move_number, limit):
-        self.txt = f'move_number={move_number} limit={limit}'
-
-class GameAlreadyEndedException(Exception):
-    pass
-
-
-class GameStatus(Enum):
-    IN_PROGRESS = 1
-    X_WIN = 2
-    O_WIN = 3
-    DRAW = 4
 
 class TicTacToeBatch():
     __field_size = 3
@@ -66,19 +45,25 @@ class TicTacToeBatch():
         else:
             return GameStatus.IN_PROGRESS
 
-    def move(self, x, y):
-        if self.__move_count >= 9:
-            raise MoveLimitReachedException(self.__move_count + 1, self.__field_size ** 2)
-
+    def __move(self, symbol, x, y):
         if self.get_status() != GameStatus.IN_PROGRESS:
-            raise GameAlreadyEndedException()
+            raise MoveUnableException('game already ended')
 
-        if self.__move_count % 2:
-            self.__set_O(x, y)
-        else:
-            self.__set_X(x, y)
+        self.__set_symbol(x, y, symbol)
 
         self.__move_count += 1
+
+    def move_X(self, x, y):
+        """"""
+        if self.__move_count % 2:
+            raise MoveUnableException('now is O move time')
+        return self.__move('X', x, y)
+
+    def move_O(self, x, y):
+        """"""
+        if not self.__move_count % 2:
+            raise MoveUnableException('now is X move time')
+        return self.__move('O', x, y)
         
 
     def __is_symbol_win(self, symbol):
@@ -101,19 +86,13 @@ class TicTacToeBatch():
 
     def __set_symbol(self, x, y, symbol:str) -> None:
         if x not in range(self.__field_size):
-            raise GameFieldSizeException(f'x={x} not in range {self.__field_size}')
+            raise MoveUnableException(f'x={x} not in range {self.__field_size}')
         if y not in range(self.__field_size):
-            raise GameFieldSizeException(f'y={y} not in range {self.__field_size}')
+            raise MoveUnableException(f'y={y} not in range {self.__field_size}')
         if self.__game_field[x][y] != self.__empty_cell_symbol:
-            raise CellAlreadySetedException(x, y)
+            raise MoveUnableException('cell already seted')
 
         self.__game_field[x][y] = symbol
-
-    def __set_X(self, x, y):
-        return self.__set_symbol(x, y, 'X')
-
-    def __set_O(self, x, y):
-        return self.__set_symbol(x, y, 'O')
 
 
 
@@ -142,7 +121,7 @@ class TestUM(unittest.TestCase):
 
     def test_first_move(self):
         tictactoe = TicTacToeBatch()
-        tictactoe.move(1, 1)
+        tictactoe.move_X(1, 1)
 
         self.assertEqual(tictactoe.get_game_field(), [
             [' ', ' ', ' '],
@@ -152,8 +131,8 @@ class TestUM(unittest.TestCase):
 
     def test_second_move(self):
         tictactoe = TicTacToeBatch()
-        tictactoe.move(1, 1)
-        tictactoe.move(0, 0)
+        tictactoe.move_X(1, 1)
+        tictactoe.move_O(0, 0)
 
         self.assertEqual(tictactoe.get_game_field(), [
             ['O', ' ', ' '],
@@ -163,46 +142,46 @@ class TestUM(unittest.TestCase):
 
     def test_X_win(self):
         tictactoe = TicTacToeBatch()
-        tictactoe.move(1, 1)
-        tictactoe.move(0, 0)
-        tictactoe.move(0, 1)
-        tictactoe.move(1, 0)
-        tictactoe.move(2, 1)
+        tictactoe.move_X(1, 1)
+        tictactoe.move_O(0, 0)
+        tictactoe.move_X(0, 1)
+        tictactoe.move_O(1, 0)
+        tictactoe.move_X(2, 1)
 
         self.assertEqual(tictactoe.get_status(), GameStatus.X_WIN)
 
     def test_O_win(self):
         tictactoe = TicTacToeBatch()
-        tictactoe.move(2, 2)
-        tictactoe.move(1, 1)
-        tictactoe.move(0, 0)
-        tictactoe.move(0, 1)
-        tictactoe.move(1, 0)
-        tictactoe.move(2, 1)
+        tictactoe.move_X(2, 2)
+        tictactoe.move_O(1, 1)
+        tictactoe.move_X(0, 0)
+        tictactoe.move_O(0, 1)
+        tictactoe.move_X(1, 0)
+        tictactoe.move_O(2, 1)
 
         self.assertEqual(tictactoe.get_status(), GameStatus.O_WIN)
 
     def test_in_progress(self):
         tictactoe = TicTacToeBatch()
-        tictactoe.move(2, 2)
-        tictactoe.move(1, 1)
-        tictactoe.move(0, 0)
-        tictactoe.move(0, 1)
-        tictactoe.move(1, 0)
+        tictactoe.move_X(2, 2)
+        tictactoe.move_O(1, 1)
+        tictactoe.move_X(0, 0)
+        tictactoe.move_O(0, 1)
+        tictactoe.move_X(1, 0)
 
         self.assertEqual(tictactoe.get_status(), GameStatus.IN_PROGRESS)
 
     def test_draw(self):
         tictactoe = TicTacToeBatch()
-        tictactoe.move(0, 0)
-        tictactoe.move(0, 1)
-        tictactoe.move(0, 2)
-        tictactoe.move(2, 0)
-        tictactoe.move(2, 1)
-        tictactoe.move(2, 2)
-        tictactoe.move(1, 0)
-        tictactoe.move(1, 1)
-        tictactoe.move(1, 2)
+        tictactoe.move_X(0, 0)
+        tictactoe.move_O(0, 1)
+        tictactoe.move_X(0, 2)
+        tictactoe.move_O(2, 0)
+        tictactoe.move_X(2, 1)
+        tictactoe.move_O(2, 2)
+        tictactoe.move_X(1, 0)
+        tictactoe.move_O(1, 1)
+        tictactoe.move_X(1, 2)
 
         self.assertEqual(tictactoe.get_status(), GameStatus.DRAW)
 

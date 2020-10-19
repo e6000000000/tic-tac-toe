@@ -1,98 +1,82 @@
-// TIC TAC TOE
-const tic_tac_toe = {
+class Game {
+    constructor() {
+        this.field = [
+            [' ', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
+        ];
+        this.x_win_count = 0;
+        this.o_win_count = 0;
+        this.draw_count = 0;
 
-    // ATTRIBUTES
-    board: ['','','','','','','','',''],
-    symbols: {
-                options: ['O','X'],
-                turn_index: 1,
-                change(){
-                    this.turn_index = ( this.turn_index === 0 ? 1:0 );
-                }
-            },
-    container_element: null,
-    gameover: false,
-    winning_sequences: [
-                        [0,1,2],
-                        [3,4,5],
-                        [6,7,8],
-                        [0,3,6],
-                        [1,4,7],
-                        [2,5,8],
-                        [0,4,8],
-                        [2,4,6]
-                    ],
+        this.game_div = document.getElementById('game');
 
-    // FUNCTIONS
-    init(container) {
-        this.container_element = container;
-    },
+        this.stat_xwin = document.createElement('p');
+        this.stat_owin = document.createElement('p');
+        this.stat_draw = document.createElement('p');
+        document.body.appendChild(this.stat_xwin);
+        document.body.appendChild(this.stat_owin);
+        document.body.appendChild(this.stat_draw);
+    }
 
-    make_play(position) {
-        if (this.gameover || this.board[position] !== '') return false;
+    update_field() {
+        this.game_div.innerHTML = '';
 
-        const currentSymbol = this.symbols.options[this.symbols.turn_index];
-        this.board[position] = currentSymbol;
-        this.draw();
-
-        const winning_sequences_index = this.check_winning_sequences(currentSymbol);
-        if (this.is_game_over()){
-            this.game_is_over();
-        }
-        if (winning_sequences_index >= 0) {
-            this.game_is_over();
-            this.stylize_winner_sequence(this.winning_sequences[winning_sequences_index]);
-        } else {
-            this.symbols.change();
-        }
-
-        return true;
-    },
-
-    stylize_winner_sequence(winner_sequence) {
-        winner_sequence.forEach((position) => {
-          this
-            .container_element
-            .querySelector(`div:nth-child(${position + 1})`)
-            .classList.add('winner');
-        });
-      },
-
-    check_winning_sequences(symbol) {
-
-        for ( i in this.winning_sequences ) {
-            if (this.board[ this.winning_sequences[i][0] ] == symbol  &&
-                this.board[ this.winning_sequences[i][1] ] == symbol &&
-                this.board[ this.winning_sequences[i][2] ] == symbol) {
-                console.log('winning sequences INDEX:' + i);
-                return i;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                var cell = document.createElement('div');
+                cell.setAttribute('onclick', 'game.move(' + i + ', ' + j + ')');
+                cell.innerText = this.field[i][j];
+                this.game_div.appendChild(cell);
             }
+        }
+    }
+
+    update_stats() {
+        this.stat_xwin.innerText = 'X wins: ' + this.x_win_count;
+        this.stat_owin.innerText = 'O wins: ' + this.o_win_count;
+        this.stat_draw.innerText = 'DRAWS: ' + this.draw_count;
+    }
+
+}
+
+class GameServer {
+    constructor() {
+        this.player_id = /\/([^\/]*)$/.exec(document.URL)[1];
+        this.session_id = /\/([^\/]*)\/[^\/]*$/.exec(document.URL)[1];
+
+        this.game = new Game();
+
+        this.ws = new WebSocket('ws://' + document.location.host + '/ws/' + this.session_id + '/' + this.player_id);
+
+        var self = this;
+        this.ws.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+    
+            self.game.field = data.game_field;
+            self.game.x_win_count = data.x_win_count;
+            self.game.o_win_count = data.o_win_count;
+            self.game.draw_count = data.draw_count;
+            self.game.update_field();
+            self.game.update_stats();
+        }
+    }
+
+    move(x, y) {
+        var jsn = {
+            command: 'move',
+            x: x,
+            y: y
         };
-        return -1;
-    },
-
-    game_is_over() {
-        this.gameover = true;
-        console.log('GAME OVER');
-    },
-
-    is_game_over() {
-        return !this.board.includes('');
-    },
-
-    start() {
-        this.symbols.turn_index = 1
-        this.board.fill('');
-        this.draw();
-        this.gameover = false;       
-    },
+        this.ws.send(JSON.stringify(jsn));
+    }
 
     restart() {
-        this.start();
-        console.log('this game has been restarted!')
-    },
+        var jsn = {
+            command: 'restart'
+        };
+        this.ws.send(JSON.stringify(jsn));
+    }
+}
 
-    draw() {
-        this.container_element.innerHTML = this.board.map((element, index) => `<div onclick="tic_tac_toe.make_play('${index}')"> ${element} </div>`).reduce((content, current) => content + current);
-    },
-};
+var game = new GameServer();

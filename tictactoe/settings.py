@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'game',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -80,7 +82,7 @@ WSGI_APPLICATION = 'tictactoe.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR.joinpath('db') / 'db.sqlite3',
+        'NAME': str(BASE_DIR.joinpath('db') / 'db.sqlite3'),
     }
 }
 
@@ -127,3 +129,11 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_URL = '/static/'
+
+
+ASGI_APPLICATION = "tictactoe.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
