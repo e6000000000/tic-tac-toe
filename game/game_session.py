@@ -59,10 +59,13 @@ class GameSession():
 
     """
     def __init__(self):
+        self.__player_quantity = 2
+
         self.__field = TicTacToeField()
 
         self.__X_id = randrange(10000, 50000)
         self.__O_id = randrange(50000, 99999)
+        self.__restart_votes = []
 
         self.x_win_count = 0
         self.o_win_count = 0
@@ -76,10 +79,20 @@ class GameSession():
     def O_id(self) -> int:
         return self.__O_id
 
-    def restart(self):
-        """clear game field
+    @property
+    def restart_votes(self) -> int:
+        return self.__restart_votes.__len__()
+
+    def restart(self, player_id):
+        """vote to clear game field, 
+        if all players vote field will be cleared
         """
-        self.__field = TicTacToeField()
+        if player_id not in self.__restart_votes:
+            self.__restart_votes.append(player_id)
+
+        if self.__restart_votes.__len__() >= self.__player_quantity:
+            self.__field = TicTacToeField()
+            self.__restart_votes.clear()
 
     def move(self, player_id:int, x:int, y:int):
         """try move like X or O (depends on player_id) to

@@ -32,7 +32,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             'game_field': game_session.game_field,
             'x_win_count': game_session.x_win_count,
             'o_win_count': game_session.o_win_count,
-            'draw_count': game_session.draw_count
+            'draw_count': game_session.draw_count,
+            'restart_votes': game_session.restart_votes
         }
         await self.send(text_data=json.dumps(data))
 
@@ -49,7 +50,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             if received_data['command'] == 'move':
                 game_session.move(int(self.player_id), received_data['x'], received_data['y'])
             elif received_data['command'] == 'restart':
-                game_session.restart()
+                game_session.restart(self.player_id)
         except MoveUnableException:
             return
         except Exception as e:

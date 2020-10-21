@@ -5,15 +5,18 @@ class Game {
             [' ', ' ', ' '],
             [' ', ' ', ' ']
         ];
+        this.restart_votes = 0;
         this.x_win_count = 0;
         this.o_win_count = 0;
         this.draw_count = 0;
 
         this.game_div = document.getElementById('game');
 
+        this.stat_restart_votes = document.createElement('p');
         this.stat_xwin = document.createElement('p');
         this.stat_owin = document.createElement('p');
         this.stat_draw = document.createElement('p');
+        document.body.appendChild(this.stat_restart_votes);
         document.body.appendChild(this.stat_xwin);
         document.body.appendChild(this.stat_owin);
         document.body.appendChild(this.stat_draw);
@@ -33,6 +36,7 @@ class Game {
     }
 
     update_stats() {
+        this.stat_restart_votes.innerText = 'restart votes: ' + this.restart_votes;
         this.stat_xwin.innerText = 'X wins: ' + this.x_win_count;
         this.stat_owin.innerText = 'O wins: ' + this.o_win_count;
         this.stat_draw.innerText = 'DRAWS: ' + this.draw_count;
@@ -54,6 +58,7 @@ class GameServer {
             var data = JSON.parse(e.data);
     
             self.game.field = data.game_field;
+            self.game.restart_votes = data.restart_votes;
             self.game.x_win_count = data.x_win_count;
             self.game.o_win_count = data.o_win_count;
             self.game.draw_count = data.draw_count;
