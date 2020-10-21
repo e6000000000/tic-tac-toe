@@ -10,17 +10,35 @@ p {
   color: #FFF;
 }
 
+.main {
+  display: flex;
+  flex-direction: row;
+}
+
 .game {
+  display: flex;
+  flex-direction: column;
+}
+
+.btns {
+  border: 1px solid #202020;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.field {
   width: 100vw;
   height: 100vw;
   margin: 0 auto;
   background-color: black;
   color: #f3daf7;
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr)
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
 }
 
-.game>div {
+.field>div {
   border: 1px solid #202020;
   font-family: Helvetica;
   font-weight: bold;
@@ -30,21 +48,28 @@ p {
   align-items: center;
 }
 
-.btn {
-  border: 2px solid #202020;
-  background-color: black;
-  border-radius: 4px;
-  color: #f3daf7;
-  margin-top: 10px;
-  padding: 10px 20px
+.field>div:hover {
+  border: 1px solid #404040;
 }
 
-.game > div.winner {
+.btn {
+  border: 1px solid #202020;
+  background-color: black;
+  color: #f3daf7;
+  padding: 10px 20px;
+  outline: none;
+}
+
+.btn:hover {
+  border: 1px solid #404040;
+}
+
+.field > div.winner {
   background: #202020;
 }
 
 @media (min-width: 300px) {
-  .game {
+  .field {
     width: 300px;
     height: 300px;
     border: 1px solid #202020;
@@ -53,6 +78,22 @@ p {
 
 @media (min-width: 1024px) {
   .btn {
-    cursor: pointer
+    cursor: pointer;
   }
+}
+
+.stats {
+  padding-left: 5px;
+}
+
+.stats > p {
+  margin: 0;
+  padding: 0;
+}
+
+.cell {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  user-select: none; 
+  cursor: default;
 }

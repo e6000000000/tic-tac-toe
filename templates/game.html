@@ -10,12 +10,25 @@
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
 </head>
 <body>
-    
-    <div class='game' id="game"></div>
-    <button class="btn" onclick="game.restart()" title="Restart this game">Restart</button>
-    <a href="{{ friend_link }}">friend link</a>
+        <div class="main">
+            <div class="game">
+                <div class='field' id="game"></div>
+                <div class="btns">
+                    <button class="btn" id="friend_link" title="copy friend link">Friend link</button>
+                    <button class="btn" id="restart" title="Restart this game">Restart</button>
+                    <button class="btn" id="lobby" title="go back">Lobby</button>
+                </div>
+            </div>
+            <div class="stats" id="stats">
+                <p>Stats:</p>
+            </div>
+        </div>
 
     <script src="{% static 'js/game.js' %}"></script>
+    <script>
+        let host = location.protocol + '//' + location.hostname + ':' + window.location.port;
+        let friend_link = host + '{{ friend_link }}';
+    </script>
     
 </body>
 </html>
