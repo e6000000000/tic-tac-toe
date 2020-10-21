@@ -1,4 +1,3 @@
-from django.test import TestCase
 import unittest
 
 from .game_field import TicTacToeField

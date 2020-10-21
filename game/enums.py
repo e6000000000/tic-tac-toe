@@ -6,3 +6,4 @@ class GameStatus(Enum):
     X_WIN = 2
     O_WIN = 3
     DRAW = 4
+
