@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <h3>create game and play with a frind: </h3>
+    <a href="{% url 'game_create' 'X' %}">as X</a>
+    <a href="{% url 'game_create' 'O' %}">as O</a>
+    <h3>search for game: </h3>
+    <a href="{% url 'game_create' 'X' %}">as X</a>
+    <a href="{% url 'game_create' 'O' %}">as O</a>
+    <h3>game with ai: </h3>
+    <a href="{% url 'ai_game' 'X' %}">as X</a>
+    <a href="{% url 'ai_game' 'O' %}">as O</a>
+</body>
+<style>
+    body {
+        background-color: black;
+        color: white;
+    }
+</style>
+</html>
