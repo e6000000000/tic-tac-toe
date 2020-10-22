@@ -132,6 +132,7 @@ STATIC_URL = '/static/'
 
 
 ASGI_APPLICATION = "tictactoe.routing.application"
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',

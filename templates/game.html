@@ -14,7 +14,7 @@
             <div class="game">
                 <div class='field' id="game"></div>
                 <div class="btns">
-                    <button class="btn" id="friend_link" title="copy friend link">Friend link</button>
+                    <button class="btn" id="friend_url" title="copy friend link">Friend link</button>
                     <button class="btn" id="restart" title="Restart this game">Restart</button>
                     <button class="btn" id="lobby" title="go back">Lobby</button>
                 </div>
@@ -24,11 +24,13 @@
             </div>
         </div>
 
-    <script src="{% static 'js/game.js' %}"></script>
     <script>
-        let host = location.protocol + '//' + location.hostname + ':' + window.location.port;
-        let friend_link = host + '{{ friend_link }}';
+        let websocket_url = 'ws://' + document.location.host + '{{ ws_url }}';
+        console.log(websocket_url);
+        let host = location.protocol + '//' + document.location.host;
+        let friend_url = host + '{{ friend_url }}';
     </script>
+    <script src="{% static 'js/game.js' %}"></script>
     
 </body>
 </html>

@@ -29,7 +29,7 @@ class Game {
             for (let j = 0; j < 3; j++) {
                 var cell = document.createElement('div');
                 cell.setAttribute('class', 'cell');
-                cell.setAttribute('onclick', 'game.move(' + i + ', ' + j + ')'); //should be redesigned
+                cell.setAttribute('onclick', 'game.move(' + j + ', ' + i + ')'); //should be redesigned
                 cell.innerText = this.field[i][j];
                 this.game_div.appendChild(cell);
             }
@@ -52,7 +52,7 @@ class GameServer {
 
         this.game = new Game();
 
-        this.ws = new WebSocket('ws://' + document.location.host + '/ws/' + this.session_id + '/' + this.player_id);
+        this.ws = new WebSocket(websocket_url);
 
         var self = this;
         this.ws.onmessage = function(e) {
@@ -90,9 +90,9 @@ document.getElementById('restart').onclick = ()=> game.restart();
 document.getElementById('lobby').onclick = function() {
     window.location.replace(host + '/game');
 }
-document.getElementById('friend_link').onclick = function() {
+document.getElementById('friend_url').onclick = function() {
     try {
-        navigator.clipboard.writeText(friend_link);
+        navigator.clipboard.writeText(friend_url);
     } catch (error) {
         alert('cant copy to clipboard');
     }

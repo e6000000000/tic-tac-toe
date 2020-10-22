@@ -80,6 +80,10 @@ class GameSession():
         return self.__O_id
 
     @property
+    def move_count(self) -> int:
+        return self.__field.move_count
+
+    @property
     def restart_votes(self) -> int:
         return self.__restart_votes.__len__()
 

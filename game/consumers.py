@@ -4,7 +4,9 @@ import asyncio
 import json
 
 from .game_sessions import GameSessions
+from .game_session import GameSession
 from .exceptions import MoveUnableException
+from .ai import TicTacToeAi
 
 
 class GameConsumer(AsyncWebsocketConsumer):
@@ -23,9 +25,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
-        await self.send_game_data('')
+        await self.send_game_data()
 
-    async def send_game_data(self, event):
+    async def send_game_data(self, event=''):
         game_session = GameSessions.get_by_id(self.session_id)
 
         data = {
@@ -69,3 +71,55 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.session_id.__str__(),
             self.channel_name
         )
+
+
+class AiGameConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.game_session = GameSession()
+        player_side = self.scope['url_route']['kwargs']['player_side']
+        self.player_id = self.game_session.O_id if player_side.lower() == 'o' else self.game_session.X_id
+        
+        await self.accept()
+        await self.ai_move_if_need()
+        await self.send_game_data()
+
+    async def send_game_data(self, event=''):
+        data = {
+            'game_field': self.game_session.game_field,
+            'x_win_count': self.game_session.x_win_count,
+            'o_win_count': self.game_session.o_win_count,
+            'draw_count': self.game_session.draw_count,
+            'restart_votes': self.game_session.restart_votes
+        }
+        await self.send(text_data=json.dumps(data))
+
+    async def ai_move_if_need(self):
+        if self.player_id == self.game_session.X_id and self.game_session.move_count % 2 or\
+           self.player_id == self.game_session.O_id and not self.game_session.move_count % 2:
+            if self.game_session.move_count < 9:
+                TicTacToeAi.move(self.game_session)
+
+    async def receive(self, text_data):
+        try:
+            received_data = json.loads(text_data)
+        except Exception as e:
+            print(type(e), e, text_data)
+            return
+
+        try:
+            if received_data['command'] == 'move':
+                self.game_session.move(int(self.player_id), received_data['x'], received_data['y'])
+            elif received_data['command'] == 'restart':
+                self.game_session.restart(self.game_session.X_id)
+                self.game_session.restart(self.game_session.O_id)
+        except MoveUnableException:
+            return
+        except Exception as e:
+            print(type(e), e, received_data)
+            return
+
+        await self.ai_move_if_need()
+        await self.send_game_data()
+
+    async def websocket_disconnect(self, event):
+        pass

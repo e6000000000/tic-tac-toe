@@ -2,6 +2,7 @@ from collections import namedtuple
 from random import randrange
 
 from .game_field import TicTacToeField
+from .game_session import GameSession
 from .enums import GameStatus
 
 
@@ -11,8 +12,16 @@ class TicTacToeAi:
     __empty_cell_symbol = TicTacToeField.empty_cell_symbol
     __field_size = TicTacToeField.field_size
 
+
     @staticmethod
-    def best_move(field_:list) -> Point:
+    def move(game_session: GameSession):
+        point = TicTacToeAi.move_coordinates(game_session.game_field)
+        game_session.move( game_session.O_id if game_session.move_count % 2 else game_session.X_id,
+            point.x, point.y
+        )
+
+    @staticmethod
+    def move_coordinates(field_:list) -> Point:
         """field_ should looks like:
         [
             ['X', 'O', ' '],
@@ -27,11 +36,13 @@ class TicTacToeAi:
         field = TicTacToeField(field=field_)
         if field.move_count == 0:
             return Point(GameStatus.IN_PROGRESS, randrange(0, 3), randrange(0, 3))
+        if field.move_count >= 9:
+            raise ValueError('game already ended')
 
-        return TicTacToeAi.__best_move(field)
+        return TicTacToeAi.__move(field)
 
     @staticmethod
-    def __best_move(field:TicTacToeField, level=0):
+    def __move(field:TicTacToeField, level=0):
         if level > 2:
             return Point(GameStatus.IN_PROGRESS, -1, -1)
         
@@ -45,7 +56,7 @@ class TicTacToeAi:
             if point.status == GameStatus.IN_PROGRESS:
                 new_field = TicTacToeField(field.get())
                 TicTacToeAi.__field_move(new_field, point.x, point.y)
-                points[i] = Point(TicTacToeAi.__best_move(new_field, level+1).status, point.x, point.y)
+                points[i] = Point(TicTacToeAi.__move(new_field, level+1).status, point.x, point.y)
             else:
                 return point
 

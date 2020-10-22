@@ -12,15 +12,20 @@ def game(request, session_id, player_id):
         friend_player_id = game_session.X_id
     else:
         friend_player_id = 0
-    friend_link = reverse('lobby') + f'{session_id}/{friend_player_id}'
+    friend_url = reverse('lobby') + f'{session_id}/{friend_player_id}'
     return render(request, 'game.html', {
-        'friend_link': friend_link
+        'friend_url': friend_url,
+        'ws_url': f'/ws/{session_id}/{player_id}' #need to be redesigned
     })
 
 def game_with_ai(request, play_side):
     """play game with ai
     """
-    return redirect('lobby')
+    
+    return render(request, 'game.html', {
+        'friend_url': '',
+        'ws_url': f'/aiws/{play_side}' #need to be redesigned
+    })
 
 def game_create(request, play_side):
     """create game session
