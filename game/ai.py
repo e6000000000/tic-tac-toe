@@ -101,9 +101,9 @@ class TicTacToeAi:
         def sort_key(x):
             if x.status == win_status:
                 return 1
-            elif x.status == GameStatus.IN_PROGRESS:
-                return 2
             elif x.status == GameStatus.DRAW:
+                return 2
+            elif x.status == GameStatus.IN_PROGRESS:
                 return 3
             elif x.status == lose_status:
                 return 4
