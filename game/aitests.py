@@ -46,12 +46,21 @@ class TestUM(unittest.TestCase):
             ['O', 'X', ' '],
         ]), (GameStatus.DRAW, 2, 2))
 
-    def test_first(self): #i realy don't know what move is the best now
-        self.assertEqual(self.ai.best_move([
+    def test_second_move(self): #i realy don't know what move is the best for now
+        self.assertIn(self.ai.best_move([
             [' ', ' ', ' '],
+            [' ', 'X', ' '],
             [' ', ' ', ' '],
-            [' ', ' ', ' '],
-        ]), (GameStatus.DRAW, 0, 0))
+        ]), (
+                (GameStatus.IN_PROGRESS, 0, 0),
+                (GameStatus.IN_PROGRESS, 0, 1),
+                (GameStatus.IN_PROGRESS, 0, 2),
+                (GameStatus.IN_PROGRESS, 1, 0),
+                (GameStatus.IN_PROGRESS, 1, 2),
+                (GameStatus.IN_PROGRESS, 2, 0),
+                (GameStatus.IN_PROGRESS, 2, 1),
+                (GameStatus.IN_PROGRESS, 2, 2),
+            ))
 
 
 def main():
