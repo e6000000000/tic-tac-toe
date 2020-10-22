@@ -5,6 +5,7 @@ import json
 
 from .game_sessions import GameSessions
 from .game_session import GameSession
+from . enums import GameStatus
 from .exceptions import MoveUnableException
 from .ai import TicTacToeAi
 
@@ -96,7 +97,7 @@ class AiGameConsumer(AsyncWebsocketConsumer):
     async def ai_move_if_need(self):
         if self.player_id == self.game_session.X_id and self.game_session.move_count % 2 or\
            self.player_id == self.game_session.O_id and not self.game_session.move_count % 2:
-            if self.game_session.move_count < 9:
+            if self.game_session.game_status == GameStatus.IN_PROGRESS:
                 TicTacToeAi.move(self.game_session)
 
     async def receive(self, text_data):
