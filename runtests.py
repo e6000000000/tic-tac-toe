@@ -10,3 +10,4 @@ if __name__ == '__main__':
     run_test('game.tests')
     run_test('game.aitests')
 
+
