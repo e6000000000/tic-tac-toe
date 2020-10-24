@@ -1,7 +1,7 @@
 import unittest
 
-from .game_field import TicTacToeField
-from .enums import GameStatus
+from game.game_field import TicTacToeField
+from game.enums import GameStatus
 
 
 class TestUM(unittest.TestCase):

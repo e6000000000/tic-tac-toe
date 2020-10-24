@@ -1,7 +1,7 @@
 import unittest
 
-from .ai import TicTacToeAi
-from .enums import GameStatus
+from game.ai import TicTacToeAi
+from game.enums import GameStatus
 
 
 class TestUM(unittest.TestCase):

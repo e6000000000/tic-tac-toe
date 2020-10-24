@@ -7,7 +7,7 @@ def run_test(module:str):
     print('\n\n')
 
 if __name__ == '__main__':
-    run_test('game.tests')
-    run_test('game.aitests')
+    run_test('tests.game_tests')
+    run_test('tests.ai_tests')
 
 
