@@ -1,0 +1,50 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.menu {
+    width: 350px;
+}
+
+.menu>h1 {
+    text-align: center;
+}
+
+.element {
+    border: 1px solid #202020;
+    padding: 5px 0px 0px 1em;
+    margin: 1em 0 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.element>h3 {
+    margin: 0px 0px 5px 0px;
+}
+
+.btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.btns>a {
+    color: #f3daf7;
+    text-decoration: none;
+    border: 1px solid #202020;
+    padding: 10px 20px;
+    text-align: center;
+
+}
+
+.btns>a:hover {
+    border-color: #404040;
+}

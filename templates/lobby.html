@@ -1,30 +1,39 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-</head>
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/lobby.css' %}">
+{% endblock %}
+
+{% block content %}
 <body>
-    <h3>create game and play with a frind: </h3>
-    <a href="{% url 'game_create' 'X' %}">as X</a>
-    <a href="{% url 'game_create' 'O' %}">as O</a>
-    <h3>search for game: </h3>
-    <a href="#" id="search_x">as X</a>
-    <a href="#" id="search_o">as O</a>
-    <h3>game with ai: </h3>
-    <a href="{% url 'ai_game' 'X' %}">as X</a>
-    <a href="{% url 'ai_game' 'O' %}">as O</a>
+    <div class="menu">
+        <h1>Tic tac toe</h1>
+        <div class="element">
+            <h3>create game and play with a frind</h3>
+            <div class="btns">
+                <a href="{% url 'game_create' 'X' %}">as X</a>
+                <a href="{% url 'game_create' 'O' %}">as O</a>
+            </div>
+        </div>
+        <div class="element">
+            <h3 id="search_label">search for game</h3>
+            <div class="btns">
+                <a href="#" id="search_x">as X</a>
+                <a href="#" id="search_o">as O</a>
+            </div>
+        </div>
+        <div class="element">
+            <h3>game with ai</h3>
+            <div class="btns">
+                <a href="{% url 'ai_game' 'X' %}">as X</a>
+                <a href="{% url 'ai_game' 'O' %}">as O</a>
+            </div>
+        </div>
+    </div>
 </body>
-<style>
-    body {
-        background-color: black;
-        color: white;
-    }
-</style>
 <script>
     let search_ws_base_url = 'ws://' + document.location.host + '{{ search_ws_base_url }}';
 </script>
 <script src="{% static 'js/lobby.js' %}"></script>
-</html>
+{% endblock %}
