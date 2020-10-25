@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.exceptions import DenyConnection
-import asyncio
+from channels.exceptions import DenyConnection, StopConsumer
+from django.urls import reverse
 import json
 
 from .game_sessions import GameSessions
@@ -8,6 +8,7 @@ from .game_session import GameSession
 from . enums import GameStatus
 from .exceptions import MoveUnableException
 from .ai import TicTacToeAi
+from .search import GameSearch
 
 
 class GameConsumer(AsyncWebsocketConsumer):
@@ -72,6 +73,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.session_id.__str__(),
             self.channel_name
         )
+        raise StopConsumer
 
 
 class AiGameConsumer(AsyncWebsocketConsumer):
@@ -123,4 +125,22 @@ class AiGameConsumer(AsyncWebsocketConsumer):
         await self.send_game_data()
 
     async def websocket_disconnect(self, event):
+        raise StopConsumer
+
+
+class SearchConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        player_side = self.scope['url_route']['kwargs']['player_side']
+        
+        await self.accept()
+        
+        result = await GameSearch.search(player_side)
+        url = reverse('game', args=(result.session_id, result.player_id))
+        await self.send(text_data=url)
+        await self.close(1000)
+
+    async def receive(self, text_data):
         pass
+
+    async def websocket_disconnect(self, event):
+        raise StopConsumer

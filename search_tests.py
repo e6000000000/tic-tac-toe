@@ -5,7 +5,8 @@ from game.search import GameSearch
 
 results = {}
 def search(result_name, player_side):
-    print(result_name, GameSearch.search(player_side).session_id)
+    result = GameSearch.search(player_side)
+    print(result_name, result.session_id, result.player_id)
 
 def start_search(result_name, player_side):
     Thread(target=search, args=(result_name, player_side)).start()

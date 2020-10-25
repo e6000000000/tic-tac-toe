@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from .game_sessions import GameSessions
+import asyncio
 
 
 def game(request, session_id, player_id):
@@ -42,4 +43,6 @@ def game_create(request, play_side):
 def lobby(request):
     """lobby from where player start
     """
-    return render(request, 'lobby.html')
+    return render(request, 'lobby.html', {
+        'search_ws_base_url': f'/searchws' #need to be redesigned
+    })
