@@ -1,17 +1,20 @@
-from threading import Thread
-from time import sleep
+import asyncio
 
 from game.search import GameSearch
 
-results = {}
-def search(result_name, player_side):
-    result = GameSearch.search(player_side)
+
+async def search(result_name, player_side):
+    result = await GameSearch.search(player_side)
     print(result_name, result.session_id, result.player_id)
 
-def start_search(result_name, player_side):
-    Thread(target=search, args=(result_name, player_side)).start()
+tasks = []
+async def main():
+    tasks.append(asyncio.create_task(search('X1', 'x')))
+    tasks.append(asyncio.create_task(search('X2', 'x')))
+    tasks.append(asyncio.create_task(search('O1', 'o')))
+    tasks.append(asyncio.create_task(search('O2', 'o')))
 
-start_search('one', 'x')
-start_search('two', 'x')
-start_search('one1', 'o')
-start_search('two1', 'o')
+    for task in tasks:
+        await task
+
+asyncio.run(main())
