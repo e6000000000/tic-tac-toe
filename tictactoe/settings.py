@@ -54,6 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tictactoe.urls'
+CHANNELS_URLCONF = 'tictactoe.channels_urls'
 
 TEMPLATES = [
     {

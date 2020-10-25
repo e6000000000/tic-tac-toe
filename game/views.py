@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect, reverse
-from .game_sessions import GameSessions
+from django.urls import reverse_lazy
 import asyncio
+
+from tictactoe.settings import CHANNELS_URLCONF
+from .game_sessions import GameSessions
 
 
 def game(request, session_id, player_id):
@@ -16,7 +19,7 @@ def game(request, session_id, player_id):
     friend_url = reverse('lobby') + f'{session_id}/{friend_player_id}'
     return render(request, 'game.html', {
         'friend_url': friend_url,
-        'ws_url': f'/ws/{session_id}/{player_id}' #need to be redesigned
+        'ws_url': reverse('game_websocket', args=(session_id, player_id), urlconf=CHANNELS_URLCONF)
     })
 
 def game_with_ai(request, play_side):
@@ -25,7 +28,7 @@ def game_with_ai(request, play_side):
     
     return render(request, 'game.html', {
         'friend_url': '',
-        'ws_url': f'/aiws/{play_side}' #need to be redesigned
+        'ws_url': reverse('aigame_websocket', args=(play_side, ), urlconf=CHANNELS_URLCONF)
     })
 
 def game_create(request, play_side):
@@ -44,5 +47,6 @@ def lobby(request):
     """lobby from where player start
     """
     return render(request, 'lobby.html', {
-        'search_ws_base_url': f'/searchws' #need to be redesigned
+        'searchX_ws_url': reverse('search_websocket', args=('X', ), urlconf=CHANNELS_URLCONF),
+        'searchO_ws_url': reverse('search_websocket', args=('O', ), urlconf=CHANNELS_URLCONF)
     })

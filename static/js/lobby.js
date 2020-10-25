@@ -21,13 +21,13 @@ function display_search_time() {
 }
 
 document.getElementById('search_x').onclick = function(e) {
-    var search_ws = new WebSocket(search_ws_base_url + '/X');
+    var search_ws = new WebSocket(searchX_ws_url);
     search_ws.onmessage = ws_search_on_message;
     setInterval(display_search_time, 1000);
 }
 
 document.getElementById('search_o').onclick = function(e) {
-    var search_ws = new WebSocket(search_ws_base_url + '/O');
+    var search_ws = new WebSocket(searchO_ws_url);
     search_ws.onmessage = ws_search_on_message;
     setInterval(display_search_time, 1000);
 }
