@@ -11,7 +11,9 @@
             <div class="game">
                 <div class='field' id="game"></div>
                 <div class="btns">
+                    {% if friend_url %}
                     <button class="btn" id="friend_url" title="copy friend link">Friend link</button>
+                    {% endif %}
                     <button class="btn" id="restart" title="Restart this game">Restart</button>
                     <button class="btn" id="lobby" title="go back">Lobby</button>
                 </div>

@@ -8,6 +8,13 @@ from .Statistic import Statistic
 def game(request, session_id, player_id):
     """play game
     """
+    return render(request, 'game.html', {
+        'ws_url': reverse('game_websocket', args=(session_id, player_id), urlconf=CHANNELS_URLCONF)
+    })
+
+def friend_game(request, session_id, player_id):
+    """play game with a friend
+    """
     game_session = GameSessions.get_by_id(session_id)
     if game_session.X_id == player_id:
         friend_player_id = game_session.O_id
@@ -15,7 +22,7 @@ def game(request, session_id, player_id):
         friend_player_id = game_session.X_id
     else:
         friend_player_id = 0
-    friend_url = reverse('lobby') + f'{session_id}/{friend_player_id}'
+    friend_url = reverse('friend_game', args=(session_id, friend_player_id))
     return render(request, 'game.html', {
         'friend_url': friend_url,
         'ws_url': reverse('game_websocket', args=(session_id, player_id), urlconf=CHANNELS_URLCONF)
@@ -40,7 +47,7 @@ def game_create(request, play_side):
         player_id = GameSessions.get_by_id(new_game_id).O_id
     else:
         raise ValueError(f'play_side should be "X" or "O", not {play_side}')
-    return redirect('game', new_game_id, player_id)
+    return redirect('friend_game', new_game_id, player_id)
 
 def lobby(request):
     """lobby from where player start
