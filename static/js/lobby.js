@@ -31,3 +31,21 @@ document.getElementById('search_o').onclick = function(e) {
     search_ws.onmessage = ws_search_on_message;
     setInterval(display_search_time, 1000);
 }
+
+
+
+
+var xhr = new XMLHttpRequest();
+xhr.onload = function() {
+    var response = JSON.parse(xhr.response);
+    document.getElementById('players_now').innerText = response.players_now;
+    document.getElementById('players_Xsearch').innerText = response.players_Xsearch;
+    document.getElementById('players_Osearch').innerText = response.players_Osearch;
+};
+
+
+function update_statistic() {
+    xhr.open('GET', statistic_url);
+    xhr.send();
+}
+setInterval(update_statistic, 1000)

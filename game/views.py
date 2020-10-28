@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect, reverse
-from django.urls import reverse_lazy
-import asyncio
+from django.shortcuts import render, redirect, reverse, HttpResponse
 
 from tictactoe.settings import CHANNELS_URLCONF
 from .game_sessions import GameSessions
+from .Statistic import Statistic
 
 
 def game(request, session_id, player_id):
@@ -48,5 +47,11 @@ def lobby(request):
     """
     return render(request, 'lobby.html', {
         'searchX_ws_url': reverse('search_websocket', args=('X', ), urlconf=CHANNELS_URLCONF),
-        'searchO_ws_url': reverse('search_websocket', args=('O', ), urlconf=CHANNELS_URLCONF)
+        'searchO_ws_url': reverse('search_websocket', args=('O', ), urlconf=CHANNELS_URLCONF),
     })
+
+def statistic(request):
+    """send json with statistics
+    """
+
+    return HttpResponse(Statistic.as_json())

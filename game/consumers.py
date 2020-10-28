@@ -9,6 +9,7 @@ from . enums import GameStatus
 from .exceptions import MoveUnableException
 from .ai import TicTacToeAi
 from .search import GameSearch
+from .Statistic import Statistic
 
 
 class GameConsumer(AsyncWebsocketConsumer):
@@ -28,6 +29,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
         await self.send_game_data()
+        Statistic.players_now += 1
 
     async def send_game_data(self, event=''):
         game_session = GameSessions.get_by_id(self.session_id)
@@ -73,6 +75,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.session_id.__str__(),
             self.channel_name
         )
+        Statistic.players_now -= 1
         raise StopConsumer
 
 
@@ -130,11 +133,15 @@ class AiGameConsumer(AsyncWebsocketConsumer):
 
 class SearchConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        player_side = self.scope['url_route']['kwargs']['player_side']
+        self.player_side = self.scope['url_route']['kwargs']['player_side']
         
         await self.accept()
-        
-        result = await GameSearch.search(player_side)
+        if self.player_side.lower() == 'x':
+            Statistic.players_Xsearch += 1
+        elif self.player_side.lower() == 'o':
+            Statistic.players_Osearch += 1
+
+        result = await GameSearch.search(self.player_side)
         url = reverse('game', args=(result.session_id, result.player_id))
         await self.send(text_data=url)
         await self.close(1000)
@@ -143,4 +150,9 @@ class SearchConsumer(AsyncWebsocketConsumer):
         pass
 
     async def websocket_disconnect(self, event):
+        if self.player_side.lower() == 'x':
+            Statistic.players_Xsearch -= 1
+        elif self.player_side.lower() == 'o':
+            Statistic.players_Osearch -= 1
+        
         raise StopConsumer
