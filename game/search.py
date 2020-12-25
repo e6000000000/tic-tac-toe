@@ -90,4 +90,4 @@ class GameSearch:
             Statistic.players_Osearch -= 1
 
         if self.player in self.player_side_searchers:
-            del self.player_side_searchers[self.player_side_searchers.index(self.player)]
+            self.player_side_searchers.pop(self.player_side_searchers.index(self.player))
