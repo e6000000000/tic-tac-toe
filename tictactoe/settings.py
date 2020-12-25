@@ -16,6 +16,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+DATABASE_DIR = BASE_DIR.joinpath('db')
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,10 +81,12 @@ WSGI_APPLICATION = 'tictactoe.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+if not Path.exists(DATABASE_DIR):
+    Path.mkdir(DATABASE_DIR)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR.joinpath('db') / 'db.sqlite3'),
+        'NAME': str(DATABASE_DIR / 'db.sqlite3'),
     }
 }
 
