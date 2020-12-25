@@ -2,6 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.exceptions import DenyConnection, StopConsumer
 from django.urls import reverse
 import json
+import asyncio
 
 from .game_sessions import GameSessions
 from .game_session import GameSession
@@ -70,13 +71,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             }
         )
 
-    async def websocket_disconnect(self, event):
+    async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.session_id.__str__(),
             self.channel_name
         )
         Statistic.players_now -= 1
-        raise StopConsumer
 
 
 class AiGameConsumer(AsyncWebsocketConsumer):
@@ -127,8 +127,8 @@ class AiGameConsumer(AsyncWebsocketConsumer):
         await self.ai_move_if_need()
         await self.send_game_data()
 
-    async def websocket_disconnect(self, event):
-        raise StopConsumer
+    async def disconnect(self, close_code):
+        pass
 
 
 class SearchConsumer(AsyncWebsocketConsumer):
@@ -136,12 +136,12 @@ class SearchConsumer(AsyncWebsocketConsumer):
         self.player_side = self.scope['url_route']['kwargs']['player_side']
         
         await self.accept()
-        if self.player_side.lower() == 'x':
-            Statistic.players_Xsearch += 1
-        elif self.player_side.lower() == 'o':
-            Statistic.players_Osearch += 1
 
-        result = await GameSearch.search(self.player_side)
+        self.game_seearch = GameSearch(self.player_side)
+        asyncio.run_coroutine_threadsafe(self.start_search(), asyncio.get_running_loop())
+
+    async def start_search(self):
+        result = await self.game_seearch.search()
         url = reverse('game', args=(result.session_id, result.player_id))
         await self.send(text_data=url)
         await self.close(1000)
@@ -149,10 +149,5 @@ class SearchConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         pass
 
-    async def websocket_disconnect(self, event):
-        if self.player_side.lower() == 'x':
-            Statistic.players_Xsearch -= 1
-        elif self.player_side.lower() == 'o':
-            Statistic.players_Osearch -= 1
-        
-        raise StopConsumer
+    async def disconnect(self, close_code):
+        self.game_seearch.cancel_search()

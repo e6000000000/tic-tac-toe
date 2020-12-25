@@ -3,6 +3,7 @@ from queue import Queue
 import asyncio
 
 from .game_sessions import GameSessions
+from .Statistic import Statistic
 
 
 SearchResult = namedtuple('search_result', ('session_id', 'player_id'))
@@ -20,7 +21,7 @@ class SearchingPlayer:
     async def await_for_find(self):
         while 1:
             if self.game_session_id is None:
-                await asyncio.sleep(0.666)
+                await asyncio.sleep(1)
             else:
                 return self.make_result()
 
@@ -40,32 +41,53 @@ class SearchingPlayer:
 
 
 class GameSearch:
-    """class that helps with a game search.
+    """class that helps with a game search. 
+    player_side should be str, "X" or "O"
     """
-    X_searchers = Queue()
-    O_searchers = Queue()
+    count = 0
+    X_searchers = []
+    O_searchers = []
 
-    @staticmethod
-    async def search(player_side: str) -> SearchResult:
+    def __init__(self, player_side: str):
+        if player_side.lower() not in ('x', 'o'):
+            raise ValueError(f'player_side should be "x" or "o", not "{player_side}"')
+        self.player_side = player_side
+        self.player = SearchingPlayer(self.player_side)
+        
+        if self.player_side.lower() == 'x':
+            self.player_side_searchers = self.X_searchers
+            self.other_side_searchers = self.O_searchers
+        elif self.player_side.lower() == 'o':
+            self.player_side_searchers = self.O_searchers
+            self.other_side_searchers = self.X_searchers
+
+    async def search(self) -> SearchResult:
         """search for a game.
-        player_side should be str, "X" or "O"
 
         method will be in progress while searching
         and return SearchResult at the end.
         """
-        player = SearchingPlayer(player_side)
-        
-        if player_side.lower() == 'x':
-            player_side_searchers = GameSearch.X_searchers
-            other_side_searchers = GameSearch.O_searchers
-        elif player_side.lower() == 'o':
-            player_side_searchers = GameSearch.O_searchers
-            other_side_searchers = GameSearch.X_searchers
 
-        if not other_side_searchers.empty():
-            other_player = other_side_searchers.get()
-            other_player.finded(player)
-            return player.make_result()
+        if self.player_side.lower() == 'x':
+            Statistic.players_Xsearch += 1
+        elif self.player_side.lower() == 'o':
+            Statistic.players_Osearch += 1
 
-        player_side_searchers.put(player)
-        return await player.await_for_find()
+        if not self.other_side_searchers.__len__() <= 0:
+            other_player = self.other_side_searchers.pop(0)
+            other_player.finded(self.player)
+            return self.player.make_result()
+
+        self.player_side_searchers.append(self.player)
+        return await self.player.await_for_find()
+
+    def cancel_search(self):
+        """cancel started search
+        """
+        if self.player_side.lower() == 'x':
+            Statistic.players_Xsearch -= 1
+        elif self.player_side.lower() == 'o':
+            Statistic.players_Osearch -= 1
+
+        if self.player in self.player_side_searchers:
+            del self.player_side_searchers[self.player_side_searchers.index(self.player)]
