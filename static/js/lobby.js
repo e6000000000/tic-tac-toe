@@ -1,3 +1,4 @@
+var search_ws = null;
 function ws_search_on_message(e) {
     window.location.replace(e.data);
 }
@@ -21,13 +22,21 @@ function display_search_time() {
 }
 
 document.getElementById('search_x').onclick = function(e) {
-    var search_ws = new WebSocket(searchX_ws_url);
+    if (search_ws != null)
+    {
+        return
+    }
+    search_ws = new WebSocket(searchX_ws_url);
     search_ws.onmessage = ws_search_on_message;
     setInterval(display_search_time, 1000);
 }
 
 document.getElementById('search_o').onclick = function(e) {
-    var search_ws = new WebSocket(searchO_ws_url);
+    if (search_ws != null)
+    {
+        return
+    }
+    search_ws = new WebSocket(searchO_ws_url);
     search_ws.onmessage = ws_search_on_message;
     setInterval(display_search_time, 1000);
 }
