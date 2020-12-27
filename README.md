@@ -13,5 +13,5 @@ Game process\
 1. Install python 3.7+ [how to](https://www.python.org/downloads/)
 2. Clone the project `git clone https://github.com/e6000000000/tic-tac-toe.git`
 3. Open project dir `cd tic-tac-toe`
-4. Install requirements `pip install -r requirements.txt`
-5. Run `python manage.py runserver`
+4. Install requirements `python3 -m pip install -r requirements.txt`
+5. Run `python3 manage.py runserver`
