@@ -2,7 +2,7 @@ from collections import namedtuple
 from queue import Queue
 import asyncio
 
-from .game_sessions import GameSessions
+from .game_session import GameSession
 from .Statistic import Statistic
 
 
@@ -29,12 +29,12 @@ class SearchingPlayer:
         if type(other_player) is not SearchingPlayer:
             raise TypeError(f'type of other_player should be SearchingPlayer, not {type(other_player)}')
 
-        self.game_session_id = GameSessions.new()
+        self.game_session_id = GameSession().id
         other_player.game_session_id = self.game_session_id
         return self.make_result()
 
     def make_result(self):
-        game_session = GameSessions.get_by_id(self.game_session_id) 
+        game_session = GameSession.get_by_id(self.game_session_id) 
         player_id = game_session.X_id if self.play_side == 'x' else game_session.O_id
         return SearchResult(self.game_session_id, player_id)
 

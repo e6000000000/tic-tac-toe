@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.http import HttpResponseNotFound
 
 from tictactoe.settings import CHANNELS_URLCONF
-from .game_sessions import GameSessions
 from .Statistic import Statistic
+from .game_session import GameSession
+from .exceptions import IdException
 
 
 def game(request, session_id, player_id):
@@ -15,7 +17,11 @@ def game(request, session_id, player_id):
 def friend_game(request, session_id, player_id):
     """play game with a friend
     """
-    game_session = GameSessions.get_by_id(session_id)
+    try:
+        game_session = GameSession.get_by_id(session_id)
+    except IdException:
+        return HttpResponseNotFound('<h2>game not available</h2>')
+
     if game_session.X_id == player_id:
         friend_player_id = game_session.O_id
     elif game_session.O_id == player_id:
@@ -40,11 +46,12 @@ def game_with_ai(request, play_side):
 def game_create(request, play_side):
     """create game session
     """
-    new_game_id = GameSessions.new()
+    new_game_session = GameSession()
+    new_game_id = new_game_session.id
     if play_side.lower() == 'x':
-        player_id = GameSessions.get_by_id(new_game_id).X_id
+        player_id = new_game_session.X_id
     elif play_side.lower() == 'o':
-        player_id = GameSessions.get_by_id(new_game_id).O_id
+        player_id = new_game_session.O_id
     else:
         raise ValueError(f'play_side should be "X" or "O", not {play_side}')
     return redirect('friend_game', new_game_id, player_id)

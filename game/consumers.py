@@ -4,7 +4,6 @@ from django.urls import reverse
 import json
 import asyncio
 
-from .game_sessions import GameSessions
 from .game_session import GameSession
 from . enums import GameStatus
 from .exceptions import MoveUnableException
@@ -19,7 +18,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.player_id = self.scope['url_route']['kwargs']['player_id']
         
         try:
-            GameSessions.get_by_id(self.session_id)
+            GameSession.get_by_id(self.session_id)
         except:
             raise DenyConnection('invalid session id')
         
@@ -33,7 +32,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         Statistic.players_now += 1
 
     async def send_game_data(self, event=''):
-        game_session = GameSessions.get_by_id(self.session_id)
+        game_session = GameSession.get_by_id(self.session_id)
 
         data = {
             'game_field': game_session.game_field,
@@ -51,7 +50,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             print(type(e), e, text_data)
             return
 
-        game_session = GameSessions.get_by_id(self.session_id)
+        game_session = GameSession.get_by_id(self.session_id)
 
         try:
             if received_data['command'] == 'move':
