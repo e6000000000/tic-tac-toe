@@ -89,10 +89,8 @@ class GameSession():
             self.__activity_timer -= 1
             if self.__activity_timer <= 0:
                 self.delete()
-                print('deleted')
                 break
             else:
-                print(self.__activity_timer)
                 sleep(1)
 
     def __restart_activity_timer(self):
